@@ -106,7 +106,7 @@ void WatchyImages::drawTemperature(){
         if(connectWiFi()){
             HTTPClient http;
             http.setConnectTimeout(3000);//3 second max timeout
-            String pibPromQuery = "http://pib.hub:3000/api/datasources/proxy/1/api/v1/query?query=am2302_temp";
+            String pibPromQuery = "http://pib:3000/api/datasources/proxy/1/api/v1/query?query=am2302_temp";
             http.begin(pibPromQuery.c_str());
             int httpResponseCode = http.GET();
             if(httpResponseCode == 200) {
