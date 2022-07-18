@@ -22,7 +22,6 @@ const unsigned char* albums[albumCount] = {
 	lautundluise,
 	sound_of_silver,
 	the_xx_xx,
-	thom_yorke_eraser
 };
 
 
