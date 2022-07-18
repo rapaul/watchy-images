@@ -1,5 +1,6 @@
 #include "Watchy_Images.h"
 #include <Arduino_JSON.h>
+#include <Fonts/FreeMonoBold12pt7b.h>
 
 const uint8_t BATTERY_DISPLAY_START_Y = 34;
 const uint8_t BATTERY_DISPLAY_START_X = 40;
@@ -9,9 +10,8 @@ RTC_DATA_ATTR int8_t officeTemperature = 0;
 
 const bool DARKMODE = false;
 
-
 // Array of all bitmaps for convenience. (Total bytes used to store images in PROGMEM = 50240)
-const int albumCount = 10;
+const int albumCount = 9;
 const unsigned char* albums[albumCount] = {
 	aphex_twin_selected_ambient_works_85_92,
 	dfa_records,
@@ -24,11 +24,10 @@ const unsigned char* albums[albumCount] = {
 	the_xx_xx,
 };
 
-
 void WatchyImages::drawWatchFace(){
     display.fillScreen(DARKMODE ? GxEPD_BLACK : GxEPD_WHITE);
     display.setTextColor(DARKMODE ? GxEPD_WHITE : GxEPD_BLACK);
-    display.setFont(&FreeMonoBold9pt7b);
+    display.setFont(&FreeMonoBold12pt7b); // ? width, 15px high
     drawBackground();
     drawTime();
     drawDate();
@@ -44,11 +43,11 @@ void WatchyImages::drawWatchFace(){
 void WatchyImages::drawBackground(){
     const unsigned char *image = albums[currentTime.Minute % albumCount];
     display.drawBitmap(0, 0, image, DISPLAY_WIDTH, DISPLAY_HEIGHT, DARKMODE ? GxEPD_WHITE : GxEPD_BLACK);
-    display.fillRect(0, 184, 200, 16, DARKMODE ? GxEPD_BLACK : GxEPD_WHITE); // space for dynamic content
+    display.fillRect(0, 180, 200, 20, DARKMODE ? GxEPD_BLACK : GxEPD_WHITE); // space for dynamic content
 }
 
 void WatchyImages::drawTime(){
-    display.setCursor(2, 198);
+    display.setCursor(0, 195);
     if(currentTime.Hour < 10){
         display.print('0');
     }
@@ -61,7 +60,7 @@ void WatchyImages::drawTime(){
 }
 
 void WatchyImages::drawDate(){
-    display.setCursor(72, 198);
+    display.setCursor(132, 195);
     uint8_t day = currentTime.Day;
     if (day < 10){
         display.print("0");
@@ -80,7 +79,7 @@ String leftPad(uint32_t num, uint8_t digits) {
     uint8_t needed = digits - input.length();
     String padded = "";
     for (int i = 0; i < needed; i++) {
-        padded += "0";
+        padded += " ";
     }
     padded += input;
     return padded;
@@ -91,20 +90,13 @@ void WatchyImages::drawSteps(){
     if (currentTime.Hour == 0 && currentTime.Minute == 0){
       sensor.resetStepCounter();
     }
-    uint32_t stepCount = sensor.getCounter();
-    String padded = leftPad(stepCount, 5);
-    display.setCursor(142, 198);
-    display.println(padded);
+    display.setCursor(0, 15);
+    display.println(sensor.getCounter());
 }
 
 void WatchyImages::drawBattery(){
-    // from https://github.com/BraininaBowl/Bahn-for-Watchy/blob/main/Bahn-for-Watchy.ino
-    display.fillRoundRect(2,2,34,12,4, GxEPD_BLACK);
-    display.fillRoundRect(4,4,30,8,3, GxEPD_WHITE);
     float batt = (getBatteryVoltage()-3.3)/0.9;
-    if (batt > 0) {
-        display.fillRoundRect(6,6,26*batt,4,2, GxEPD_BLACK);
-    }
+    display.drawLine(0,199,200*batt,199,GxEPD_BLACK);
 }
 
 void WatchyImages::drawTemperature(){
@@ -127,6 +119,9 @@ void WatchyImages::drawTemperature(){
         }
     }
 
-    display.setCursor(175, 15);
-    display.println(officeTemperature);
+    display.setCursor(132, 15);
+    if(officeTemperature != 0){
+        String padded = leftPad(officeTemperature, 5);
+        display.println(padded);
+    }
 }
