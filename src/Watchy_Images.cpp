@@ -6,7 +6,8 @@ const uint8_t BATTERY_DISPLAY_START_Y = 34;
 const uint8_t BATTERY_DISPLAY_START_X = 40;
 const uint8_t BATTERY_DISPLAY_HEIGHT = 4;
 const uint8_t BATTERY_SEGMENT_WIDTH = 20;
-RTC_DATA_ATTR int8_t officeTemperature = 0;
+const int8_t NO_VALUE = 255;
+RTC_DATA_ATTR int8_t officeTemperature = NO_VALUE;
 
 const bool DARKMODE = false;
 
@@ -102,6 +103,7 @@ void WatchyImages::drawBattery(){
 void WatchyImages::drawTemperature(){
     // Update every 30 minutes
     if(currentTime.Minute % 30 == 0) {
+        officeTemperature = NO_VALUE;
         // Pull data from Prometheus on Raspberry Pi (via Grafana)
         if(connectWiFi()){
             HTTPClient http;
@@ -119,8 +121,8 @@ void WatchyImages::drawTemperature(){
         }
     }
 
-    display.setCursor(131, 15);
-    if(officeTemperature != 0){
+    if(officeTemperature != NO_VALUE){
+        display.setCursor(131, 15);
         String padded = leftPad(officeTemperature, 5);
         display.println(padded);
     }
