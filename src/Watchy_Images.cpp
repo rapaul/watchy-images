@@ -119,7 +119,7 @@ void WatchyImages::drawTemperature(){
         }
     }
 
-    display.setCursor(132, 15);
+    display.setCursor(131, 15);
     if(officeTemperature != 0){
         String padded = leftPad(officeTemperature, 5);
         display.println(padded);
