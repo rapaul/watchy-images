@@ -61,7 +61,7 @@ void WatchyImages::drawTime(){
 }
 
 void WatchyImages::drawDate(){
-    display.setCursor(132, 195);
+    display.setCursor(131, 195);
     uint8_t day = currentTime.Day;
     if (day < 10){
         display.print("0");
