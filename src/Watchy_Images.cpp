@@ -12,7 +12,7 @@ RTC_DATA_ATTR int8_t officeTemperature = NO_VALUE;
 const bool DARKMODE = false;
 
 // Array of all bitmaps for convenience. (Total bytes used to store images in PROGMEM = 50240)
-const int albumCount = 9;
+const int albumCount = 10;
 const unsigned char* albums[albumCount] = {
 	aphex_twin_selected_ambient_works_85_92,
 	dfa_records,
@@ -21,6 +21,7 @@ const unsigned char* albums[albumCount] = {
 	joy_division_unknown_pleasures,
 	kraftwerk_computer_world,
 	lautundluise,
+	nin,
 	sound_of_silver,
 	the_xx_xx,
 };
