@@ -8,6 +8,7 @@ class WatchyImages : public Watchy{
     using Watchy::Watchy;
     public:
         void drawWatchFace();
+        void syncTime();
         void drawBackground();
         void drawTime();
         void drawDate();

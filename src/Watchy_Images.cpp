@@ -30,6 +30,8 @@ void WatchyImages::drawWatchFace(){
     display.fillScreen(DARKMODE ? GxEPD_BLACK : GxEPD_WHITE);
     display.setTextColor(DARKMODE ? GxEPD_WHITE : GxEPD_BLACK);
     display.setFont(&FreeMonoBold12pt7b); // ? width, 15px high
+
+    syncTime();
     drawBackground();
     drawTime();
     drawDate();
@@ -40,6 +42,14 @@ void WatchyImages::drawWatchFace(){
     //turn off radios
     WiFi.mode(WIFI_OFF);
     btStop();
+}
+
+void WatchyImages::syncTime(){
+    if(currentTime.Hour == 5 && currentTime.Minute == 0) {
+        if(connectWiFi()){
+            syncNTP();
+        }
+    }
 }
 
 void WatchyImages::drawBackground(){
