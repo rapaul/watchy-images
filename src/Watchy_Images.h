@@ -14,7 +14,6 @@ class WatchyImages : public Watchy{
         void drawDate();
         void drawSteps();
         void drawBattery();
-        void drawTemperature();
 };
 
 #endif

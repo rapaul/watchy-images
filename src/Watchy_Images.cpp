@@ -6,8 +6,6 @@ const uint8_t BATTERY_DISPLAY_START_Y = 34;
 const uint8_t BATTERY_DISPLAY_START_X = 40;
 const uint8_t BATTERY_DISPLAY_HEIGHT = 4;
 const uint8_t BATTERY_SEGMENT_WIDTH = 20;
-const int8_t NO_VALUE = 255;
-RTC_DATA_ATTR int8_t officeTemperature = NO_VALUE;
 
 const bool DARKMODE = false;
 
@@ -37,7 +35,6 @@ void WatchyImages::drawWatchFace(){
     drawDate();
     drawSteps();
     drawBattery();
-    drawTemperature();
 
     //turn off radios
     WiFi.mode(WIFI_OFF);
@@ -109,32 +106,4 @@ void WatchyImages::drawSteps(){
 void WatchyImages::drawBattery(){
     float batt = (getBatteryVoltage()-3.3)/0.9;
     display.drawLine(0,199,200*batt,199,GxEPD_BLACK);
-}
-
-void WatchyImages::drawTemperature(){
-    // Update every 30 minutes
-    if(currentTime.Minute % 30 == 0) {
-        officeTemperature = NO_VALUE;
-        // Pull data from Prometheus on Raspberry Pi (via Grafana)
-        if(connectWiFi()){
-            HTTPClient http;
-            http.setConnectTimeout(3000);//3 second max timeout
-            String pibPromQuery = "http://pib:3000/api/datasources/proxy/1/api/v1/query?query=quantile_over_time(0.5%2C%20am2302_temp%5B5m%5D)";
-            http.begin(pibPromQuery.c_str());
-            int httpResponseCode = http.GET();
-            if(httpResponseCode == 200) {
-                String payload = http.getString();
-                JSONVar responseObject = JSON.parse(payload);
-                float_t temp_float = String((const char*)(responseObject["data"]["result"][0]["value"][1])).toFloat();
-                officeTemperature = (int) round(temp_float);
-            }
-            http.end();
-        }
-    }
-
-    if(officeTemperature != NO_VALUE){
-        display.setCursor(131, 15);
-        String padded = leftPad(officeTemperature, 5);
-        display.println(padded);
-    }
 }
