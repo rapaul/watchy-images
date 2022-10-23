@@ -10,7 +10,7 @@
 #define WEATHER_UPDATE_INTERVAL 60 //must be greater than 5, measured in minutes
 //NTP Settings
 #define NTP_SERVER "pool.ntp.org"
-#define GMT_OFFSET_SEC 3600 * 12 //Auckland
+#define GMT_OFFSET_SEC 3600 * 13 //Auckland
 #define DST_OFFSET_SEC 3600
 
 watchySettings settings{
