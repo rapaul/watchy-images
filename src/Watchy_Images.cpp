@@ -9,19 +9,11 @@ const uint8_t BATTERY_SEGMENT_WIDTH = 20;
 
 const bool DARKMODE = false;
 
-// Array of all bitmaps for convenience. (Total bytes used to store images in PROGMEM = 50240)
-const int albumCount = 10;
+// Array of all bitmaps for convenience.
+const int albumCount = 2;
 const unsigned char* albums[albumCount] = {
-	aphex_twin_selected_ambient_works_85_92,
-	dfa_records,
-	discovery,
-	french79_olympic,
-	joy_division_unknown_pleasures,
-	kraftwerk_computer_world,
-	lautundluise,
-	nin,
-	sound_of_silver,
-	the_xx_xx,
+    image_rhcp,
+    image_blood_sugar
 };
 
 void WatchyImages::drawWatchFace(){
@@ -99,8 +91,10 @@ void WatchyImages::drawSteps(){
     if (currentTime.Hour == 0 && currentTime.Minute == 0){
       sensor.resetStepCounter();
     }
-    display.setCursor(0, 15);
-    display.println(sensor.getCounter());
+    if (currentTime.Minute % 2 == 0) { // hack to hide steps on blood sugar sex magic
+        display.setCursor(0, 15);
+        display.println(sensor.getCounter());
+    }
 }
 
 void WatchyImages::drawBattery(){
