@@ -1,5 +1,4 @@
 #include "Watchy_Images.h"
-#include <Arduino_JSON.h>
 #include <Fonts/FreeMonoBold12pt7b.h>
 
 const uint8_t BATTERY_DISPLAY_START_Y = 34;
