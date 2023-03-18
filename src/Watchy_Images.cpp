@@ -8,21 +8,6 @@ const uint8_t BATTERY_SEGMENT_WIDTH = 20;
 
 const bool DARKMODE = false;
 
-// Array of all bitmaps for convenience. (Total bytes used to store images in PROGMEM = 50240)
-const int albumCount = 10;
-const unsigned char* albums[albumCount] = {
-	aphex_twin_selected_ambient_works_85_92,
-	dfa_records,
-	discovery,
-	french79_olympic,
-	joy_division_unknown_pleasures,
-	kraftwerk_computer_world,
-	lautundluise,
-	nin,
-	sound_of_silver,
-	the_xx_xx,
-};
-
 void WatchyImages::drawWatchFace(){
     display.fillScreen(DARKMODE ? GxEPD_BLACK : GxEPD_WHITE);
     display.setTextColor(DARKMODE ? GxEPD_WHITE : GxEPD_BLACK);
@@ -49,9 +34,29 @@ void WatchyImages::syncTime(){
 }
 
 void WatchyImages::drawBackground(){
-    const unsigned char *image = albums[currentTime.Minute % albumCount];
-    display.drawBitmap(0, 0, image, DISPLAY_WIDTH, DISPLAY_HEIGHT, DARKMODE ? GxEPD_WHITE : GxEPD_BLACK);
-    display.fillRect(0, 180, 200, 20, DARKMODE ? GxEPD_BLACK : GxEPD_WHITE); // space for dynamic content
+    Serial.begin(9600);
+    drawSpiral(3, 75, 20);
+    drawSpiral(5, 50, 10);
+}
+
+void WatchyImages::drawSpiral(int strokeSize, int maxRadius, int maxRatio) {
+    int cx = 100;
+    int cy = 90;
+    int r1 = random(5, maxRadius);
+    int r2 = maxRadius - r1;
+    int ratio1 = random(1, 5);
+    int ratio2 = random(1, maxRatio);
+    float pi = 3.14159;
+    
+    for (float i = 0; i < 2*pi; i += 0.001) {
+        int x = cx + r1 * cos(i * ratio1) + r2 * cos(-i * ratio2);
+        int y = cy + r1 * sin(i * ratio1) + r2 * sin(-i * ratio2);
+        display.drawRect(x, y, strokeSize, strokeSize, DARKMODE ? GxEPD_WHITE : GxEPD_BLACK);
+    }
+    
+    char dimensions[50];
+    sprintf(dimensions, "Dimensions: r1=%d r2=%d ratio1=%d ratio2=%d", r1, r2, ratio1, ratio2);
+    Serial.println(dimensions);
 }
 
 void WatchyImages::drawTime(){
