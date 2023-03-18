@@ -1,17 +1,15 @@
 #include "Watchy_Images.h"
-#include <Fonts/FreeMonoBold12pt7b.h>
+#include <Fonts/FreeMonoBold18pt7b.h>
+#include <Fonts/FreeMonoBold24pt7b.h>
 
 const uint8_t BATTERY_DISPLAY_START_Y = 34;
 const uint8_t BATTERY_DISPLAY_START_X = 40;
 const uint8_t BATTERY_DISPLAY_HEIGHT = 4;
 const uint8_t BATTERY_SEGMENT_WIDTH = 20;
 
-const bool DARKMODE = false;
-
 void WatchyImages::drawWatchFace(){
-    display.fillScreen(DARKMODE ? GxEPD_BLACK : GxEPD_WHITE);
-    display.setTextColor(DARKMODE ? GxEPD_WHITE : GxEPD_BLACK);
-    display.setFont(&FreeMonoBold12pt7b); // ? width, 15px high
+    display.fillScreen(GxEPD_WHITE);
+    display.setTextColor(GxEPD_WHITE);
 
     syncTime();
     drawBackground();
@@ -34,33 +32,23 @@ void WatchyImages::syncTime(){
 }
 
 void WatchyImages::drawBackground(){
-    Serial.begin(9600);
-    drawSpiral(3, 75, 20);
-    drawSpiral(5, 50, 10);
+    int gap = 10;
+    int displaySize = 200;
+    for (int x = -displaySize; x <= displaySize; x = x + gap) {
+        display.drawLine(x, 0, x+displaySize, displaySize, GxEPD_BLACK);
+        display.drawLine(x+1, 0, x+displaySize+1, displaySize, GxEPD_BLACK); // make lines fat
+        display.drawLine(x+2, 0, x+displaySize+2, displaySize, GxEPD_BLACK); // make lines fat
+        display.drawLine(x+3, 0, x+displaySize+3, displaySize, GxEPD_BLACK); // make lines fat
+        display.drawLine(x+4, 0, x+displaySize+4, displaySize, GxEPD_BLACK); // make lines fat
+        display.drawLine(x+6, 0, x+displaySize+6, displaySize, GxEPD_BLACK); // make lines fat (with a gap)
+    }
 }
 
-void WatchyImages::drawSpiral(int strokeSize, int maxRadius, int maxRatio) {
-    int cx = 100;
-    int cy = 90;
-    int r1 = random(5, maxRadius);
-    int r2 = maxRadius - r1;
-    int ratio1 = random(1, 5);
-    int ratio2 = random(1, maxRatio);
-    float pi = 3.14159;
-    
-    for (float i = 0; i < 2*pi; i += 0.001) {
-        int x = cx + r1 * cos(i * ratio1) + r2 * cos(-i * ratio2);
-        int y = cy + r1 * sin(i * ratio1) + r2 * sin(-i * ratio2);
-        display.drawRect(x, y, strokeSize, strokeSize, DARKMODE ? GxEPD_WHITE : GxEPD_BLACK);
-    }
-    
-    char dimensions[50];
-    sprintf(dimensions, "Dimensions: r1=%d r2=%d ratio1=%d ratio2=%d", r1, r2, ratio1, ratio2);
-    Serial.println(dimensions);
-}
+
 
 void WatchyImages::drawTime(){
-    display.setCursor(0, 195);
+    display.setFont(&FreeMonoBold24pt7b);
+    display.setCursor(29, 70);
     if(currentTime.Hour < 10){
         display.print('0');
     }
@@ -73,7 +61,8 @@ void WatchyImages::drawTime(){
 }
 
 void WatchyImages::drawDate(){
-    display.setCursor(131, 195);
+    display.setFont(&FreeMonoBold18pt7b);
+    display.setCursor(29, 130);
     uint8_t day = currentTime.Day;
     if (day < 10){
         display.print("0");
@@ -103,7 +92,8 @@ void WatchyImages::drawSteps(){
     if (currentTime.Hour == 0 && currentTime.Minute == 0){
       sensor.resetStepCounter();
     }
-    display.setCursor(0, 15);
+    display.setFont(&FreeMonoBold18pt7b);
+    display.setCursor(29, 170);
     display.println(sensor.getCounter());
 }
 

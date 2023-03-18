@@ -10,7 +10,6 @@ class WatchyImages : public Watchy{
         void drawWatchFace();
         void syncTime();
         void drawBackground();
-        void drawSpiral(int strokeSize, int maxRadius, int maxRatio);
         void drawTime();
         void drawDate();
         void drawSteps();
