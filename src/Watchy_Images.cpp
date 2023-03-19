@@ -34,7 +34,7 @@ void WatchyImages::syncTime(){
 void WatchyImages::drawBackground(){
     int gap = 10;
     int displaySize = 200;
-    for (int x = -displaySize; x <= displaySize; x = x + gap) {
+    for (int x = -displaySize; x < displaySize; x = x + gap) {
         display.drawLine(x, 0, x+displaySize, displaySize, GxEPD_BLACK);
         display.drawLine(x+1, 0, x+displaySize+1, displaySize, GxEPD_BLACK); // make lines fat
         display.drawLine(x+2, 0, x+displaySize+2, displaySize, GxEPD_BLACK); // make lines fat
@@ -43,8 +43,6 @@ void WatchyImages::drawBackground(){
         display.drawLine(x+6, 0, x+displaySize+6, displaySize, GxEPD_BLACK); // make lines fat (with a gap)
     }
 }
-
-
 
 void WatchyImages::drawTime(){
     display.setFont(&FreeMonoBold24pt7b);
@@ -99,5 +97,5 @@ void WatchyImages::drawSteps(){
 
 void WatchyImages::drawBattery(){
     float batt = (getBatteryVoltage()-3.3)/0.9;
-    display.drawLine(0,199,200*batt,199,GxEPD_BLACK);
+    display.fillRect(0, 197, 200*batt, 3, GxEPD_BLACK);
 }
