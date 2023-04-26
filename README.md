@@ -2,6 +2,11 @@
 
 Show images on your [Watchy](https://github.com/sqfmi/Watchy).
 
+![joy division](docs/watchy-images-1.jpg)
+![the xx](docs/watchy-images-2.jpg)
+![daft punk](docs/watchy-images-3.jpg)
+![nin](docs/watchy-images-4.jpg)
+
 ## Dither Image
 
 1. Find image on web
