@@ -2,10 +2,10 @@
 
 Show images on your [Watchy](https://github.com/sqfmi/Watchy).
 
-![joy division](docs/watchy-images-1.jpg)
-![the xx](docs/watchy-images-2.jpg)
-![daft punk](docs/watchy-images-3.jpg)
-![nin](docs/watchy-images-4.jpg)
+<img src="docs/watchy-images-1.jpg" width="150px" alt="joy division"/>
+<img src="docs/watchy-images-2.jpg" width="150px" alt="the xx"/>
+<img src="docs/watchy-images-3.jpg" width="150px" alt="daft punk"/>
+<img src="docs/watchy-images-4.jpg" width="150px" alt="nin"/>
 
 ## Dither Image
 
