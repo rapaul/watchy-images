@@ -16,7 +16,7 @@ Show images on your [Watchy](https://github.com/sqfmi/Watchy).
 Images converted with https://javl.github.io/image2cpp/
 
 1. Upload image
-2. Background colour: White
+2. Background colour: White, Invert
 3. Generate Code
 4. Put in images.h
 5. Update reference in Watchy_Images.cpp `albums` and `albumCount`

@@ -17,10 +17,10 @@ const unsigned char* albums[albumCount] = {
 	french79_olympic,
 	joy_division_unknown_pleasures,
 	kraftwerk_computer_world,
-	lautundluise,
 	nin,
 	sound_of_silver,
 	the_xx_xx,
+	rx7,
 };
 
 void WatchyImages::drawWatchFace(){
