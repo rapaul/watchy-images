@@ -1,5 +1,6 @@
 #include "Watchy_Images.h"
-#include <Fonts/FreeMonoBold12pt7b.h>
+#include "nk57_monospace_cd_bd12pt7b.h"
+
 
 
 
@@ -94,7 +95,7 @@ const unsigned char* albums[albumCount] = {
 void WatchyImages::drawWatchFace(){
     display.fillScreen(GxEPD_WHITE);
     display.setTextColor(GxEPD_BLACK);
-    display.setFont(&FreeMonoBold12pt7b); // ? width, 15px high
+    display.setFont(&nk57_monospace_cd_bd12pt7b); // ? width, 15px high
 
     syncTime();
     drawBackground();
@@ -123,7 +124,7 @@ void WatchyImages::drawBackground(){
 }
 
 void WatchyImages::drawTime(){
-    display.setCursor(0, 195);
+    display.setCursor(0, 199);
     if(currentTime.Hour < 10){
         display.print('0');
     }
@@ -136,7 +137,7 @@ void WatchyImages::drawTime(){
 }
 
 void WatchyImages::drawDate(){
-    display.setCursor(131, 195);
+    display.setCursor(137, 199);
     uint8_t day = currentTime.Day;
     if (day < 10){
         display.print("0");
