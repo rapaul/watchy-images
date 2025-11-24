@@ -110,9 +110,9 @@ void WatchyImages::drawWatchFace(){
 }
 
 void WatchyImages::syncTime(){
-    if(currentTime.Hour == 5 && currentTime.Minute == 0) {
+    if(currentTime.Hour == 4 && currentTime.Minute == 0) {
         if(connectWiFi()){
-            syncNTP();
+            getWeatherData();
         }
     }
 }
