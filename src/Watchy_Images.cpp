@@ -1,8 +1,8 @@
 #include "Watchy_Images.h"
 #include "nk57_monospace_cd_bd12pt7b.h"
-
-
-
+#include <WiFiClientSecure.h>
+#include <HTTPClient.h>
+#include <Arduino_JSON.h>
 
 // Array of all bitmaps for convenience. (Total bytes used to store images in PROGMEM = 50240)
 const int albumCount = 83;
@@ -92,6 +92,8 @@ const unsigned char* albums[albumCount] = {
 	epd_bitmap_warner_case_summer_on_the_inside
 };
 
+RTC_DATA_ATTR int timeSetByNetwork = -1;
+
 void WatchyImages::drawWatchFace(){
     display.fillScreen(GxEPD_WHITE);
     display.setTextColor(GxEPD_BLACK);
@@ -102,17 +104,43 @@ void WatchyImages::drawWatchFace(){
     drawTime();
     drawDate();
     
-    // drawBattery();
+    drawBattery();
 
     //turn off radios
     WiFi.mode(WIFI_OFF);
     btStop();
 }
 
-void WatchyImages::syncTime(){
-    if(currentTime.Hour == 4 && currentTime.Minute == 0) {
-        if(connectWiFi()){
-            getWeatherData();
+void WatchyImages::syncTime() {
+    if(currentTime.Hour == 4 && currentTime.Minute == 0 || timeSetByNetwork < 0) {
+		display.setCursor(0, 50);
+        if(connectWiFi()) {
+            WiFiClientSecure client;
+			client.setInsecure();	// no default cert store on arduino
+            HTTPClient http;
+            http.begin(client, "https://world-time-api3.p.rapidapi.com/timezone/Pacific/Auckland");
+            http.addHeader("x-rapidapi-key", "ADD_OWN_KEY");
+
+            int httpResponseCode = http.GET();
+            if (httpResponseCode == 200) {
+                String payload = http.getString();
+                JSONVar responseObject = JSON.parse(payload);
+                if (JSON.typeof(responseObject) == "undefined") {
+                    display.print("JSON Parse Error!");
+                } else {
+                    time_t epochTime = (int)responseObject["unixtime"];
+                    int offset = (int)responseObject["raw_offset"] + (int)responseObject["dst_offset"];
+                    tmElements_t tm;
+                    breakTime(epochTime + offset, tm);
+                    RTC.set(tm);
+                }
+            } else {
+                display.print("HTTP Error: ");
+                display.print(httpResponseCode);
+            }
+
+            http.end();
+			timeSetByNetwork = 1;
         }
     }
 }
