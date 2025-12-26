@@ -115,34 +115,36 @@ void WatchyImages::syncTime() {
     if(currentTime.Hour == 4 && currentTime.Minute == 0 || timeSetByNetwork < 0) {
 		display.setCursor(0, 50);
         if(connectWiFi()) {
-            WiFiClientSecure client;
-			client.setInsecure();	// no default cert store on arduino
-            HTTPClient http;
-            http.begin(client, "https://world-time-api3.p.rapidapi.com/timezone/Pacific/Auckland");
-            http.addHeader("x-rapidapi-key", "ADD_OWN_KEY");
-
-            int httpResponseCode = http.GET();
-            if (httpResponseCode == 200) {
-                String payload = http.getString();
-                JSONVar responseObject = JSON.parse(payload);
-                if (JSON.typeof(responseObject) == "undefined") {
-                    display.print("JSON Parse Error!");
-                } else {
-                    time_t epochTime = (int)responseObject["unixtime"];
-                    int offset = (int)responseObject["raw_offset"] + (int)responseObject["dst_offset"];
-                    tmElements_t tm;
-                    breakTime(epochTime + offset, tm);
-                    RTC.set(tm);
-                }
-            } else {
-                display.print("HTTP Error: ");
-                display.print(httpResponseCode);
-            }
-
-            http.end();
-			timeSetByNetwork = 1;
+			syncNTP();
         }
+		timeSetByNetwork = 1;
     }
+}
+
+// Override syncNTP to use a web API that provides NZ time with DST adjustment
+bool WatchyImages::syncNTP() {
+	WiFiClientSecure client;
+	client.setInsecure();	// no default cert store on arduino
+	HTTPClient http;
+	http.begin(client, "https://world-time-api3.p.rapidapi.com/timezone/Pacific/Auckland");
+	http.addHeader("x-rapidapi-key", "1191ef877dmsh723e2cd59ded819p1e7b98jsnda0ab3a0ec2a");
+
+	int httpResponseCode = http.GET();
+	if (httpResponseCode == 200) {
+		String payload = http.getString();
+		JSONVar responseObject = JSON.parse(payload);
+		if (JSON.typeof(responseObject) == "undefined") {
+			return false;
+		} else {
+			time_t epochTime = (int)responseObject["unixtime"];
+			int offset = (int)responseObject["raw_offset"] + (int)responseObject["dst_offset"];
+			tmElements_t tm;
+			breakTime(epochTime + offset, tm);
+			RTC.set(tm);
+		}
+	}
+	http.end();
+	return true;
 }
 
 void WatchyImages::drawBackground(){
@@ -165,7 +167,7 @@ void WatchyImages::drawTime(){
 }
 
 void WatchyImages::drawDate(){
-    display.setCursor(137, 199);
+    display.setCursor(138, 199);
     uint8_t day = currentTime.Day;
     if (day < 10){
         display.print("0");
@@ -190,9 +192,12 @@ String leftPad(uint32_t num, uint8_t digits) {
     return padded;
 }
 
-
-
 void WatchyImages::drawBattery(){
-    float batt = (getBatteryVoltage()-3.3)/0.9;
-    display.drawLine(0,199,200*batt,199,GxEPD_BLACK);
+    float max_voltage = 4.2;
+    float min_voltage = 3.3;
+    float batt = (getBatteryVoltage()-min_voltage)/(max_voltage-min_voltage);
+    if (batt < 0.2) { // charge if under 20%
+        display.setCursor(97, 199);
+        display.print("!");
+    }
 }

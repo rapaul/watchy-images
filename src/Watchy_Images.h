@@ -9,6 +9,7 @@ class WatchyImages : public Watchy{
     public:
         void drawWatchFace();
         void syncTime();
+        bool syncNTP();
         void drawBackground();
         void drawTime();
         void drawDate();
